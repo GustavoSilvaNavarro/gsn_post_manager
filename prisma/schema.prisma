@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma" // only if I want to create another runtime
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ! Define Models
+
+
+// ? User models
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String? // means could be null
+  createdAt DateTime @default(now()) @map("created_at") // Mapped to snake_case
+  updatedAt DateTime @updatedAt @map("updated_at")     // Mapped to snake_case
+  posts     Posts[]
+
+  @@map("user") // This is the key: maps the model 'User' to the table 'user'
+}
+
+
+// ? Posts Models
+model Posts {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  user    User       @relation(fields: [userId], references: [id])
+  userId  Int        @map("author_id")// Foreign key
+  createdAt DateTime @default(now()) @map("created_at") // Added @map here
+  updatedAt DateTime @updatedAt @map("updated_at")     // Added @map here
+
+  @@map("posts")
+}
