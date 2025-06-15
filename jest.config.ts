@@ -5,6 +5,7 @@ const config: Config.InitialOptions = {
   moduleDirectories: ['node_modules', '<rootDir>'],
   modulePathIgnorePatterns: ['<rootDir>/tests/integration'],
   verbose: true,
+  silent: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
   testRegex: 'test.ts',

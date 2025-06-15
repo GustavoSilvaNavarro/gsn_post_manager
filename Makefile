@@ -57,7 +57,6 @@ test-db:
   -e POSTGRES_DB=test_data_manager timescale/timescaledb-ha:pg14-latest
 
 # Pipeline commands
-
 setup:
 	npm install
 
