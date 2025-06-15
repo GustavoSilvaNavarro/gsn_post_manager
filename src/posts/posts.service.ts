@@ -30,7 +30,7 @@ export class PostsService {
 
   async getSinglePost(id: number) {
     try {
-      return await this.prisma.posts.findUniqueOrThrow({ where: { id } });
+      return await this.prisma.posts.findUniqueOrThrow({ where: { id }, include: { user: true } });
     } catch (err) {
       const defaultMsg = `Record was not retrieved for ID: ${id}`;
       this.logger.error(`Record could not be retrieve for ID: ${id}`, err);
@@ -64,7 +64,7 @@ export class PostsService {
   async deletePost(id: number) {
     try {
       const deletedPost = await this.prisma.posts.delete({ where: { id } });
-      return deletedPost.id;
+      return deletedPost;
     } catch (err) {
       const msg = `Error deleting post with ID: ${id}`;
       this.logger.error(msg, err);
