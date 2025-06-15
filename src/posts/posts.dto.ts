@@ -20,4 +20,4 @@ export class CreateNewPostDto {
   authorId: number;
 }
 
-export class UpdateUserDto extends PartialType(CreateNewPostDto) {}
+export class UpdatePostDto extends PartialType(CreateNewPostDto) {}
