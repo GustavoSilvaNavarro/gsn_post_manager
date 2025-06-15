@@ -8,6 +8,34 @@ TICKET_PREFIX := $(shell git branch --show-current | cut -d '_' -f 1)
 KUSTOMIZE_VERSION := $(shell test -e /usr/local/bin/kustomize && /usr/local/bin/kustomize version | cut -f2 -d/ | cut -f1 -d' ')
 KUBEVAL_VERSION := $(shell test -e /usr/local/bin/kubeval && /usr/local/bin/kubeval --version | grep Version | cut -f2 -d' ')
 
+.PHONY: nest-new-module nest-new-controller nest-new-service nest-create
+
+# Prisma DB Migration Commands
+prisma-apply-migration:
+	npx prisma migrate dev
+
+prisma-migration-down:
+	npx prisma migrate reset
+
+prisma-create-migration:
+	npx prisma migrate dev --name $(name)
+
+# NestJs Commands
+nest-new-module:
+	@echo "Generating module: $(name)"
+	npx nest g module $(name) --no-spec
+
+nest-new-controller:
+	@echo "Generating controller: $(name)"
+	npx nest g controller $(name) --no-spec
+
+nest-new-service:
+	@echo "Generating service: $(name)"
+	npx nest g service $(name) --no-spec
+
+nest-create: nest-new-module nest-new-controller nest-new-service
+	@echo "--- NestJS components for '$(name)' created successfully! ---"
+
 # DB Commands
 migrate:
 	npm run typeorm -- migration:run -d ./src/adapters/db/typeorm/migrationDataSource.ts
