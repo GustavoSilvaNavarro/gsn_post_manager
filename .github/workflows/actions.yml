@@ -1,0 +1,64 @@
+name: Automating testing
+# Pushing to development environment allows for validation.
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: ['opened', 'reopened', 'synchronize', 'ready_for_review']
+
+jobs:
+  check-format:
+    if: ${{ !github.event.pull_request.draft }}
+    name: Run Code Linting and Formatting
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout Service
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      - name: Run Code Linting
+        run: make lint
+      - name: Run Check Format
+        run: make check
+
+  unit-test:
+    if: ${{ !github.event.pull_request.draft }}
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Service
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+      - name: Run Unit Tests
+        run: make unit
+
+  branch-has-latest-changes:
+    if: ${{ !github.event.pull_request.draft }}
+    name: Check working branch is up to date
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Checkout Service
+        uses: actions/checkout@v4
+      - name: Fetch latest changes
+        run: git fetch origin
+      - name: Check if current working branch is not behind default main branch
+        run: |
+          # Get the name of the current branch
+          current_branch=${{ github.head_ref }}
+          echo "Current working branch -> '$current_branch'"
+
+          # Get the name of the main branch
+          main_branch=$(git remote show origin | grep 'HEAD branch' | cut -d ':' -f 2 | xargs)
+          echo "Main branch -> '$main_branch'"
+
+          if git merge-base --is-ancestor origin/$main_branch origin/$current_branch; then
+            echo "Your remote working branch '$current_branch' is up to date with the remote main branch '$main_branch'."
+          else
+            echo "Your remote working branch '$current_branch' is behind the remote main branch '$main_branch'."
+            echo "Please consider merging or rebasing your branch to include the latest changes."
+            exit 1
+          fi
