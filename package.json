@@ -14,6 +14,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix",
     "check": "npx prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "migrate:up": "npx prisma migrate deploy",
     "test": "jest -c jest.config.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

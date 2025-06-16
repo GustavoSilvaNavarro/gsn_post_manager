@@ -110,9 +110,12 @@ run-external-services:
 build-base:
 	@DOCKER_BUILDKIT=1 docker buildx build -f Dockerfile.base -t $(SERVICE_NAME)_base .
 
+# up: build-base
+# 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose -f ./docker-compose.yml -f ./docker-compose.inf.yml build --parallel
+# 	docker compose -f ./docker-compose.yml -f ./docker-compose.inf.yml up -d --force-recreate --scale integration_tests=0
 up: build-base
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose -f ./docker-compose.yml -f ./docker-compose.inf.yml build --parallel
-	docker compose -f ./docker-compose.yml -f ./docker-compose.inf.yml up -d --force-recreate --scale integration_tests=0
+	docker compose -f ./docker-compose.yml -f ./docker-compose.inf.yml up -d --force-recreate
 
 up-integration:
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose -f ./docker-compose.yml -f ./docker-compose.inf.yml up --build -d
