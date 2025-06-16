@@ -1,0 +1,9 @@
+.github/
+.deploy/
+.dockerignore
+.gitignore
+Makefile
+*.txt
+*.MD
+node_modules/
+.env
